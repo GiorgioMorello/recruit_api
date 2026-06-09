@@ -1,15 +1,16 @@
 from typing import List
-
-from fastapi import FastAPI, Body, HTTPException, Path, Query, Request
+from fastapi import FastAPI, Body, HTTPException, Path, Query, Request, BackgroundTasks
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from models import Client
-from schemes import ClientCreate, ClientResponse
+from schemes import ClientCreate, ClientResponse, DataForEmail
 from database import db_conn
 from create_db import create_tables
 from http_errors import NotFoundError
+from send_email import send_to_email
+from dotenv import load_dotenv
 
-
+load_dotenv()
 
 app = FastAPI()
 
@@ -87,6 +88,18 @@ def earn_score(db: db_conn, client_id: str, score: int=Body(...)) -> ClientRespo
    
    return client
    
+   
+   
+@app.post('/finish/{client_id}')
+async def finish_recruit(db: db_conn, client_id: str, candidate_data: DataForEmail, bg_tasks: BackgroundTasks) -> ClientResponse:
+   
+   client = db.query(Client).filter(Client.id == client_id).first()
+   if not client:
+      raise NotFoundError(status_code=404, code='not_found', field='client_id', detail='Client not found')
+   
+   bg_tasks.add_task(send_to_email, candidate_data)
+   
+   return client
    
    
    
