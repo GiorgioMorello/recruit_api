@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+
+  recruit-api:
+
+    build: .
+
+    container_name: recruit_api
+
+    restart: always
+
+    env_file:
+      - .env
+
+    expose:
+      - "5003"
+
+    volumes:
+      - ./data:/data
+
+    labels:
+      - "traefik.enable=true"
+
+      # Router
+      - "traefik.http.routers.recruit-api.rule=Host(`${DOMAIN}`)"
+
+      # Entrypoint
+      - "traefik.http.routers.recruit-api.entrypoints=${TRAEFIK_ENTRYPOINT}"
+
+      # Service
+      - "traefik.http.services.recruit-api.loadbalancer.server.port=${PORT}"
+
+      - "traefik.http.routers.recruit-api.tls=true"
+      
+      - "traefik.http.routers.recruit-api.tls.certresolver=letsencrypt"
+
+    networks:
+      - sua-net-aqui
+
+networks:
+  sua-net-aqui:
+    external: true
