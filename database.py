@@ -2,11 +2,11 @@ from fastapi import Depends
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 from typing import Annotated
+import os
 
-DATABASE_URL = "sqlite:///./database.db"
 
 engine = create_engine(
-    DATABASE_URL,
+    os.getenv('DATABASE_URL'), # type: ignore
     connect_args={"check_same_thread": False}
 )
 
