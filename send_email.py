@@ -7,31 +7,35 @@ from schemes import DataForEmail
 def send_to_email(candidate: DataForEmail):
 
     corpo = f"""
-    Novo candidato cadastrado
+        <html>
+        <body>
+            <p><b>Novo candidato cadastrado</b></p>
 
-    Nome: {candidate.name}
-    WhatsApp: {candidate.tel}
-    CPF: {candidate.cpf}
-    Data de nascimento: {candidate.birth_date}
-    Instagram/Facebook: {candidate.instagram_facebook}
+            <p><b>Nome:</b> {candidate.name}</p>
+            <p><b>WhatsApp:</b> {candidate.tel}</p>
+            <p><b>CPF:</b> {candidate.cpf}</p>
+            <p><b>Data de nascimento:</b> {candidate.birth_date}</p>
+            <p><b>Instagram/Facebook:</b> {candidate.instagram_facebook}</p>
 
-    Situação profissional: {candidate.professional_situation}
-    CEP: {candidate.cep}
-    Cidade: {candidate.city}
-    Estado: {candidate.state}
+            <p><b>Situação profissional:</b> {candidate.professional_situation}</p>
+            <p><b>CEP:</b> {candidate.cep}</p>
+            <p><b>Cidade:</b> {candidate.city}</p>
+            <p><b>Estado:</b> {candidate.state}</p>
 
-    Produtos ou segmentos que já trabalhei: {candidate.product_exp}
-    Produto que faço venda atualmente: {candidate.current_product}
-    Você pretende fazer da revenda uma renda extra ou principal: {candidate.income}
-    Quantas horas por dia você acredita que consegue dedicar às vendas?: {candidate.available_time}
+            <p><b>Produtos ou segmentos que já trabalhei:</b> {candidate.product_exp}</p>
+            <p><b>Produto que faço venda atualmente:</b> {candidate.current_product}</p>
+            <p><b>Você pretende fazer da revenda uma renda extra ou principal:</b> {candidate.income}</p>
+            <p><b>Quantas horas por dia você acredita que consegue dedicar às vendas?:</b> {candidate.available_time}</p>
 
-    Nome do Representante comercial da Fantasy que me indicou: {candidate.commercial_representative}
-    Por que você acredita que seria uma boa revendedora Fantasy?: {candidate.motivation}
+            <p><b>Nome do Representante comercial da Fantasy que me indicou:</b> {candidate.commercial_representative}</p>
+            <p><b>Por que você acredita que seria uma boa revendedora Fantasy?:</b> {candidate.motivation}</p>
 
-    Pontuação final: {candidate.score}
-    """
+            <p><b>Pontuação final:</b> {candidate.score}</p>
+        </body>
+        </html>
+        """
 
-    msg = MIMEText(corpo)
+    msg = MIMEText(corpo, "html")
     msg["Subject"] = "Novo candidato"
     msg["From"] = os.getenv("EMAIL_USER") #type: ignore
     msg["To"] = 'mcfullp9mo@gmail.com'  # envia para você mesmo #type: ignore
