@@ -97,6 +97,7 @@ async def finish_recruit(db: db_conn, client_id: str, candidate_data: DataForEma
    if not client:
       raise NotFoundError(status_code=404, code='not_found', field='client_id', detail='Client not found')
    
+   candidate_data.score = client.score # type: ignore
    bg_tasks.add_task(send_to_email, candidate_data)
    
    return client
