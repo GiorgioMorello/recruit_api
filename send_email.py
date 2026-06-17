@@ -14,6 +14,14 @@ from email.mime.application import MIMEApplication
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
+# Add an image to the PDF
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer,
+    Image
+)
+
 
 
 def generate_pdf(candidate):
@@ -21,9 +29,23 @@ def generate_pdf(candidate):
 
     doc = SimpleDocTemplate(buffer)
     styles = getSampleStyleSheet()
+    
+    # Cria a imagem
+    logo = Image(
+        "fantasy_logo.png",
+        width=90,
+        height=90
+    )
+    
+    # Centraliza a logo
+    logo.hAlign = "CENTER"
 
     elements = [
-        Paragraph("<b>NOVO CANDIDATO CADASTRADO</b>", styles["Title"]),
+        logo,
+        
+        Spacer(1, 15),
+        
+        Paragraph("<b>NOVO CANDIDATO DA FANTASY FOLHEADOS</b>", styles["Title"]),
         Spacer(1, 20),
 
         # ======================
@@ -142,36 +164,6 @@ def generate_pdf(candidate):
 def send_to_email(candidate: DataForEmail):
     
     pdf_content = generate_pdf(candidate)
-    
-
-    corpo = f"""
-        <html>
-        <body>
-            <p><b>Novo candidato cadastrado</b></p>
-
-            <p><b>Nome:</b> {candidate.name}</p>
-            <p><b>WhatsApp:</b> {candidate.tel}</p>
-            <p><b>CPF:</b> {candidate.cpf}</p>
-            <p><b>Data de nascimento:</b> {candidate.birth_date}</p>
-            <p><b>Instagram/Facebook:</b> {candidate.instagram_facebook}</p>
-
-            <p><b>Situação profissional:</b> {candidate.professional_situation}</p>
-            <p><b>CEP:</b> {candidate.cep}</p>
-            <p><b>Cidade:</b> {candidate.city}</p>
-            <p><b>Estado:</b> {candidate.state}</p>
-
-            <p><b>Produtos ou segmentos que já trabalhei:</b> {candidate.product_exp}</p>
-            <p><b>Produto que faço venda atualmente:</b> {candidate.current_product}</p>
-            <p><b>Você pretende fazer da revenda uma renda extra ou principal:</b> {candidate.income}</p>
-            <p><b>Quantas horas por dia você acredita que consegue dedicar às vendas?:</b> {candidate.available_time}</p>
-
-            <p><b>Nome do Representante comercial da Fantasy que me indicou:</b> {candidate.commercial_representative}</p>
-            <p><b>Por que você acredita que seria uma boa revendedora Fantasy?:</b> {candidate.motivation}</p>
-
-            <p><b>Pontuação final:</b> {candidate.score}</p>
-        </body>
-        </html>
-        """
         
     
 
