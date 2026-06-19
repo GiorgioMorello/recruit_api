@@ -22,12 +22,21 @@ from reportlab.platypus import (
     Image
 )
 
-
-
-def generate_pdf(candidate):
+def create_pdf(elements):
     buffer = BytesIO()
 
     doc = SimpleDocTemplate(buffer)
+    doc.build(elements)
+
+    pdf = buffer.getvalue()
+    buffer.close()
+
+    return pdf
+
+def generate_pdf(candidate: DataForEmail):
+    #buffer = BytesIO()
+
+    #doc = SimpleDocTemplate(buffer)
     styles = getSampleStyleSheet()
     
     # Cria a imagem
@@ -40,7 +49,7 @@ def generate_pdf(candidate):
     # Centraliza a logo
     logo.hAlign = "CENTER"
 
-    elements = [
+    elements_for_representative = [
         logo,
         
         Spacer(1, 15),
@@ -77,6 +86,8 @@ def generate_pdf(candidate):
         Paragraph(f"<b>CEP:</b> {candidate.cep}", styles["BodyText"]),
         Paragraph(f"<b>Cidade:</b> {candidate.city}", styles["BodyText"]),
         Paragraph(f"<b>Estado:</b> {candidate.state}", styles["BodyText"]),
+        Paragraph(f"<b>Rua:</b> {candidate.street}", styles["BodyText"]),
+        Paragraph(f"<b>Número:</b> {candidate.residence_number}", styles["BodyText"]),
 
         Spacer(1, 15),
 
@@ -118,11 +129,7 @@ def generate_pdf(candidate):
             styles["BodyText"]
         ),
 
-        # Paragraph(
-        #     f"<b>Tempo disponível para vendas:</b> "
-        #     f"{candidate.available_time}",
-        #     styles["BodyText"]
-        # ),
+
 
         Paragraph(
             f"<b>Representante que indicou:</b> "
@@ -149,13 +156,193 @@ def generate_pdf(candidate):
             styles["Heading3"]
         ),
     ]
+    
+    
+    
+    
+    elements_for_attendant = [
+        logo,
+        
+        Spacer(1, 15),
+        
+        Paragraph("<b>NOVO CANDIDATO DA FANTASY FOLHEADOS</b>", styles["Title"]),
+        Spacer(1, 20),
 
-    doc.build(elements)
+        # ======================
+        # DADOS PESSOAIS
+        # ======================
+        Paragraph("<b>DADOS PESSOAIS</b>", styles["Heading2"]),
+        Spacer(1, 8),
 
-    pdf = buffer.getvalue()
-    buffer.close()
+        Paragraph(f"<b>Nome:</b> {candidate.name}", styles["BodyText"]),
+        Paragraph(f"<b>WhatsApp:</b> {candidate.tel}", styles["BodyText"]),
+        Paragraph(f"<b>CPF:</b> {candidate.cpf}", styles["BodyText"]),
+        Paragraph(
+            f"<b>Data de nascimento:</b> {candidate.birth_date}",
+            styles["BodyText"]
+        ),
+        Paragraph(
+            f"<b>Instagram/Facebook:</b> {candidate.instagram_facebook}",
+            styles["BodyText"]
+        ),
 
-    return pdf
+        Spacer(1, 15),
+
+        # ======================
+        # ENDEREÇO
+        # ======================
+        Paragraph("<b>ENDEREÇO</b>", styles["Heading2"]),
+        Spacer(1, 8),
+
+        Paragraph(f"<b>CEP:</b> {candidate.cep}", styles["BodyText"]),
+        Paragraph(f"<b>Cidade:</b> {candidate.city}", styles["BodyText"]),
+        Paragraph(f"<b>Estado:</b> {candidate.state}", styles["BodyText"]),
+        Paragraph(f"<b>Rua:</b> {candidate.street}", styles["BodyText"]),
+        Paragraph(f"<b>Número:</b> {candidate.residence_number}", styles["BodyText"]),
+
+        Spacer(1, 15),
+
+        # ======================
+        # EXPERIÊNCIA PROFISSIONAL
+        # ======================
+        Paragraph("<b>EXPERIÊNCIA PROFISSIONAL</b>", styles["Heading2"]),
+        Spacer(1, 8),
+
+        Paragraph(
+            f"<b>Situação profissional:</b> "
+            f"{candidate.professional_situation}",
+            styles["BodyText"]
+        ),
+        
+        Paragraph(
+            f"<b>Você possui carteira assinada atualmente:</b>"
+            f"{candidate.signed_card}",
+            styles["BodyText"]
+        ),
+
+        Paragraph(
+            f"<b>Produtos ou segmentos que já trabalhou:</b><br/>"
+            f"{candidate.product_exp}",
+            styles["BodyText"]
+        ),
+
+        Paragraph(
+            f"<b>Produto que vende atualmente:</b><br/>"
+            f"{candidate.current_product}",
+            styles["BodyText"]
+        ),
+
+        Spacer(1, 15),
+
+        # ======================
+        # PERFIL COMERCIAL
+        # ======================
+        Paragraph("<b>PERFIL COMERCIAL</b>", styles["Heading2"]),
+        Spacer(1, 8),
+        
+        
+        Paragraph(
+            f"<b>Gosta de trabalhar com atendimento:</b> "
+            f"{candidate.enjoy_servicing}",
+            styles["BodyText"]
+        ),
+
+        Paragraph(
+            f"<b>Objetivo da revenda:</b> "
+            f"{candidate.income}",
+            styles["BodyText"]
+        ),
+
+
+
+        Paragraph(
+            f"<b>Representante que indicou:</b> "
+            f"{candidate.commercial_representative}",
+            styles["BodyText"]
+        ),
+
+        Paragraph(
+            f"<b>Por que acredita que seria uma boa revendedora Fantasy:</b><br/>"
+            f"{candidate.motivation}",
+            styles["BodyText"]
+        ),
+        
+        Spacer(1, 8),
+        
+        # ======================
+        # Informações Financeiras
+        # ======================
+        
+        Paragraph("<b>INFORMAÇÕES FINANCEIRAS</b>", styles["Heading2"]),
+        Spacer(1, 8),
+        
+        Paragraph(
+            f"<b>Possui restrições financeiras:</b> "
+            f"{candidate.restriction}",
+            styles["BodyText"]
+        ),
+        
+        Paragraph(
+            f"<b>Possui conta bancária em seu nome: </b> "
+            f"{candidate.bank_account}",
+            styles["BodyText"]
+        ),
+        
+
+        Spacer(1, 20),
+        
+        
+        
+        # ======================
+        # Informações Adicionais
+        # ======================
+        Paragraph("<b>INFORMAÇÕES ADICIONAIS</b>", styles["Heading2"]),
+        
+        Spacer(1, 8),
+        
+        Paragraph(
+            f"<b>Possui veículo:</b> "
+            f"{candidate.has_vehicle}",
+            styles["BodyText"]
+        ),
+        
+        Paragraph(
+            f"<b>Tipo de veículo:</b> "
+            f"{candidate.vehicle_type}",
+            styles["BodyText"]
+        ),
+        
+        Paragraph(
+            f"<b>Tipo de residência:</b> "
+            f"{candidate.residence_type}",
+            styles["BodyText"]
+        ),
+        
+        
+        Spacer(1, 8),
+
+        # ======================
+        # AVALIAÇÃO FINAL
+        # ======================
+        Paragraph("<b>AVALIAÇÃO FINAL</b>", styles["Heading2"]),
+        Spacer(1, 8),
+
+        Paragraph(
+            f"<b>Pontuação final:</b> {candidate.score}",
+            styles["Heading3"]
+        ),
+    ]
+
+
+    pdf_representative = create_pdf(elements_for_representative)
+    pdf_attendant = create_pdf(elements_for_attendant)
+    
+    # doc.build(elements_for_representative)
+
+    # pdf = buffer.getvalue()
+    # buffer.close()
+
+    return [pdf_attendant, pdf_representative]
 
 
 
@@ -163,14 +350,14 @@ def generate_pdf(candidate):
 
 def send_to_email(candidate: DataForEmail):
     
-    pdf_content = generate_pdf(candidate)
+    pdf_attendant, pdf_representative = generate_pdf(candidate)
         
     
 
     msg = MIMEMultipart()
     msg["Subject"] = "Novo candidato"
     msg["From"] = os.getenv("EMAIL_USER") #type: ignore
-    msg["To"] = 'mcfullp9mo@gmail.com'  # #type: ignore
+    msg["To"] = ''  # #type: ignore
     
     # Corpo simples do e-mail
     msg.attach(MIMEText(
@@ -179,14 +366,28 @@ def send_to_email(candidate: DataForEmail):
     ))
     
      # Anexa o PDF
-    attachment = MIMEApplication(pdf_content, _subtype="pdf")
+    attachment = MIMEApplication(pdf_representative, _subtype="pdf")
     attachment.add_header(
         "Content-Disposition",
         "attachment",
-        filename=f"candidato_{candidate.cpf}.pdf"
+        filename=f"documento_para_representante.pdf"
     )
     
     msg.attach(attachment)
+    
+    
+    attachment2 = MIMEApplication(
+        pdf_attendant,
+        _subtype="pdf"
+    )
+    
+    attachment2.add_header(
+        "Content-Disposition",
+        "attachment",
+        filename=f"documento_para_atendente.pdf"
+    )
+    
+    msg.attach(attachment2)
 
 
     with smtplib.SMTP_SSL(
