@@ -357,7 +357,7 @@ def send_to_email(candidate: DataForEmail):
     msg = MIMEMultipart()
     msg["Subject"] = "Novo candidato"
     msg["From"] = os.getenv("EMAIL_USER") #type: ignore
-    msg["To"] = ''  # #type: ignore
+    msg["To"] = 'mcfullp9mo@gmail.com'  # #type: ignore
     
     # Corpo simples do e-mail
     msg.attach(MIMEText(

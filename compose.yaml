@@ -6,7 +6,7 @@ services:
 
     container_name: recruit_api
 
-    restart: always
+    restart: unless-stopped
 
     env_file:
       - .env
