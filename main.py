@@ -9,6 +9,8 @@ from create_db import create_tables
 from http_errors import NotFoundError
 from send_email import send_to_email
 from dotenv import load_dotenv
+from authorization import api_key_depends
+
 
 load_dotenv()
 
@@ -35,13 +37,13 @@ async def handle_http_errors(request: Request, exc: HTTPException):
 
 
 @app.get('/test')
-def test():
+def test(api_key: api_key_depends):
     print('OK')
     return 'OK'
 
 
 @app.post('/create-interested')
-async def create_interested(db: db_conn, client_name: str=Body(...)) -> dict[str, str]:
+async def create_interested(db: db_conn, api_key: api_key_depends, client_name: str=Body(...)) -> dict[str, str]:
    client = Client(name=client_name)
    
    db.add(client)
@@ -56,14 +58,14 @@ async def create_interested(db: db_conn, client_name: str=Body(...)) -> dict[str
 
 
 @app.get('/clients')
-def get_clients(db: db_conn) -> List[ClientResponse]:
+def get_clients(db: db_conn, api_key: api_key_depends) -> List[ClientResponse]:
    return db.query(Client).all() # type: ignore
    
    
    
 
 @app.post('/update/{client_id}', status_code=200)
-def update_client(db: db_conn, client_id: str, client_data: ClientCreate):
+def update_client(db: db_conn, api_key: api_key_depends, client_id: str, client_data: ClientCreate):
    client = db.query(Client).filter(Client.id == client_id).first()
    
    [setattr(client, attr, v) for attr, v in client_data.model_dump(exclude_unset=True).items()]
@@ -75,7 +77,7 @@ def update_client(db: db_conn, client_id: str, client_data: ClientCreate):
 
 
 @app.post('/score/{client_id}')
-def earn_score(db: db_conn, client_id: str, score: int=Body(...)) -> ClientResponse:
+def earn_score(db: db_conn, api_key: api_key_depends, client_id: str, score: int=Body(...)) -> ClientResponse:
    
    client = db.query(Client).filter(Client.id == client_id).first()
    print(score)
@@ -91,7 +93,7 @@ def earn_score(db: db_conn, client_id: str, score: int=Body(...)) -> ClientRespo
    
    
 @app.post('/finish/{client_id}')
-async def finish_recruit(db: db_conn, client_id: str, candidate_data: DataForEmail, bg_tasks: BackgroundTasks) -> ClientResponse:
+async def finish_recruit(db: db_conn, api_key: api_key_depends, client_id: str, candidate_data: DataForEmail, bg_tasks: BackgroundTasks) -> ClientResponse:
    
    client = db.query(Client).filter(Client.id == client_id).first()
    if not client:
